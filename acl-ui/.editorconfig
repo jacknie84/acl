@@ -1,0 +1,7 @@
+[*.{js, jsx, ts, tsx, json, html}]
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+end_of_line = lf
+tab_width = 2
+charset = utf-8
