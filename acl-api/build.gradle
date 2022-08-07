@@ -1,0 +1,47 @@
+import java.nio.file.Paths
+
+plugins {
+  id 'idea'
+  id 'java'
+  id 'org.springframework.boot' version '2.6.5'
+  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+group = 'com.jacknie.examples'
+version = '0.0.1'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+  annotationProcessor 'org.projectlombok:lombok'
+  annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+  annotationProcessor 'com.querydsl:querydsl-apt::jpa'
+
+  compileOnly 'org.projectlombok:lombok'
+
+  developmentOnly 'org.springframework.boot:spring-boot-devtools'
+  developmentOnly 'com.h2database:h2'
+
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.springframework.boot:spring-boot-starter-security'
+  implementation 'org.springframework.security:spring-security-oauth2-resource-server'
+  implementation 'org.springframework.security:spring-security-oauth2-jose'
+  implementation 'com.querydsl:querydsl-jpa'
+  implementation 'org.springframework.data:spring-data-envers'
+}
+
+task startTcpH2(type: JavaExec) {
+  description = 'TCP H2 Server 실행'
+  classpath = sourceSets.main.runtimeClasspath
+  def userHome = System.getProperty("user.home")
+  def baseDir = Paths.get(userHome, 'h2').toString()
+  args += ['-tcp', '-tcpAllowOthers', '-baseDir', baseDir]
+  mainClass.set('org.h2.tools.Server')
+}
