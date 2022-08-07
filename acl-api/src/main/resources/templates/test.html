@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Test Page</title>
+</head>
+<body>
+  <ul>
+    <li>
+      <a href="javascript:authorize()">Authorize</a>
+    </li>
+  </ul>
+</body>
+<script>
+
+  function authorize() {
+    const searchParams = new URLSearchParams({
+      response_type: 'code',
+      client_id: 'acl-ui',
+      scope: 'openid',
+      redirect_uri: 'http://127.0.0.1:3000/callback'
+    });
+    location.href = `http://localhost:8080/oauth2/authorize?${searchParams}`;
+  }
+
+</script>
+</html>
