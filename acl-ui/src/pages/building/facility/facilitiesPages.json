@@ -1,0 +1,97 @@
+{
+  "root": [
+    [
+      {
+        "id": 1,
+        "name": "B1F",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 5,
+        "name": "1F",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 9,
+        "name": "2F",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      }
+    ]
+  ],
+  "1": [
+    [
+      {
+        "id": 2,
+        "name": "회의실",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 3,
+        "name": "창고",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 4,
+        "name": "MDF",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 101,
+        "name": "구내식당",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      }
+    ]
+  ],
+  "5": [
+    [
+      {
+        "id": 6,
+        "name": "맞이방",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 7,
+        "name": "창고",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 8,
+        "name": "화장실",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      }
+    ]
+  ],
+  "9": [
+    [
+      {
+        "id": 10,
+        "name": "사무실",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 12,
+        "name": "회의실",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 13,
+        "name": "화장실",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      }
+    ]
+  ],
+  "10": [
+    [
+      {
+        "id": 14,
+        "name": "CEO ROOM",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      },
+      {
+        "id": 11,
+        "name": "비서실",
+        "lastModifiedDate": "2022-07-01T12:00:00Z"
+      }
+    ]
+  ]
+}
