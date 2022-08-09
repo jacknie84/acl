@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import BuildingRegister from "src/pages/building/BuildingRegister";
 import Buildings from "src/pages/building/Buildings";
@@ -11,6 +11,7 @@ import BuildingFacilityTabs from "src/pages/building/facility/BuildingFacilityTa
 import FacilityPage from "src/pages/building/facility/FacilityPage";
 import Me from "src/pages/me/Me";
 import MemberRegister from "src/pages/member/MemberRegister";
+import appStateStore from "src/utils/app-state-store";
 import Dashboard from "../pages/Dashboard";
 import GettingStart from "../pages/GettingStart";
 import MemberDetail from "../pages/member/MemberDetail";
@@ -20,19 +21,27 @@ import { ConfirmProvider } from "./confirm";
 import Layout from "./Layout";
 import PageView from "./PageView";
 
-type ReturnState = { from?: Location };
+type ReturnState = { from?: Location; error?: any };
 
 function Main() {
   const location = useLocation();
   const navigate = useNavigate();
-  const onAuthenticated = useCallback(() => {
-    const { from } = (location.state ?? {}) as ReturnState;
-    const returnTo = from ? `${from.pathname}${from.search}` : "/home";
-    navigate(returnTo, { replace: true });
-  }, [location, navigate]);
+  const onAuthenticated = useCallback(async () => {
+    const { returnTo = { uri: "/home" } } = await appStateStore.loadAsync();
+    navigate(returnTo.uri, { replace: true });
+  }, [navigate]);
+  const onError = useCallback((error: any) => console.log(error), []);
+
+  useEffect(() => {
+    const { from, error } = (location.state ?? {}) as ReturnState;
+    if (from) {
+      const appState = { returnTo: { uri: `${from.pathname}${from.search}`, reason: error?.message } };
+      appStateStore.saveAsync(appState);
+    }
+  }, [location]);
 
   return (
-    <AuthProvider onAuthenticated={onAuthenticated}>
+    <AuthProvider onAuthenticated={onAuthenticated} onError={onError}>
       <ConfirmProvider>
         <Routes>
           <Route path="/" element={<Outlet />}>

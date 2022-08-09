@@ -1,18 +1,18 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Form, Stack } from "react-bootstrap";
 import { FieldErrors, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useConfirmModal } from "src/components/confirm";
 import LoadingButton from "src/components/LoadingButton";
+import useGetMeApi from "src/hooks/api/get-me";
 import { waitingAsync } from "src/utils/promise";
 import EmailController from "../member/components/MemberForm/EmailController";
 import PasswordController from "../member/components/MemberForm/PasswordController";
 import { SaveMember } from "../member/types";
 
 function Me() {
-  const { control, register, handleSubmit } = useForm<SaveMember>({
-    defaultValues: { email: "test@email.com", password: "123456" },
-  });
+  const { value } = useGetMeApi();
+  const { control, register, handleSubmit, setValue } = useForm<SaveMember>();
   const navigate = useNavigate();
   const [isPending, setPending] = useState(false);
   const publish = useConfirmModal();
@@ -30,6 +30,12 @@ function Me() {
     [publish],
   );
   const onInvalid = useCallback((error: FieldErrors<SaveMember>) => {}, []);
+
+  useEffect(() => {
+    if (value) {
+      setValue("email", value.email);
+    }
+  }, [value, setValue]);
 
   return (
     <Form onSubmit={handleSubmit(onValid, onInvalid)}>
