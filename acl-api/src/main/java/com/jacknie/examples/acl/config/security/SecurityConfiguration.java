@@ -25,6 +25,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -46,6 +49,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
         applyDefaultSecurity(http);
         return http
+            .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
             // Redirect to the login page when not authenticated from the
             // authorization endpoint
             .exceptionHandling(configurer -> configurer
@@ -57,6 +61,7 @@ public class SecurityConfiguration {
     @Order(3)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
+            .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
             .requestMatcher(new NegatedRequestMatcher(new AntPathRequestMatcher("/test/**")))
             .authorizeHttpRequests(configurer -> configurer.anyRequest().authenticated())
             // Form login handles the redirect to the login page from the
@@ -69,6 +74,7 @@ public class SecurityConfiguration {
     @Order(1)
     public SecurityFilterChain resourceSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
+            .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
             .requestMatchers(configurer -> configurer.mvcMatchers("/me"))
             .oauth2ResourceServer(configurer -> configurer.jwt().decoder(jwtDecoder(jwkSource())))
             .authorizeRequests(configurer -> configurer.anyRequest().authenticated())
@@ -127,5 +133,19 @@ public class SecurityConfiguration {
     @Bean
     public ProviderSettings providerSettings() {
         return ProviderSettings.builder().build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin(CorsConfiguration.ALL);
+        config.addAllowedHeader(CorsConfiguration.ALL);
+        config.addAllowedMethod(CorsConfiguration.ALL);
+        config.addExposedHeader(CorsConfiguration.ALL);
+        config.setAllowCredentials(false);
+        config.setMaxAge(1800L);
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
