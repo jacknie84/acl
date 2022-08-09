@@ -13,6 +13,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -124,8 +126,8 @@ public class SecurityConfiguration {
             keyPairGenerator.initialize(2048);
             keyPair = keyPairGenerator.generateKeyPair();
         }
-        catch (Exception ex) {
-            throw new IllegalStateException(ex);
+        catch (Exception e) {
+            throw new IllegalStateException(e);
         }
         return keyPair;
     }
@@ -147,5 +149,10 @@ public class SecurityConfiguration {
         config.setMaxAge(1800L);
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
