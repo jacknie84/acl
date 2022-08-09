@@ -1,15 +1,17 @@
 import { OAuth2Error, OAuth2TokenResponseBody } from "../types";
 
+const storage = sessionStorage;
+
 const tokenStore = {
   async saveAsync(token: OAuth2TokenResponseBody) {
-    sessionStorage.setItem("tokenResponse", JSON.stringify(token));
+    storage.setItem("tokenResponse", JSON.stringify(token));
     return token;
   },
   clear() {
-    sessionStorage.removeItem("tokenResponse");
+    storage.removeItem("tokenResponse");
   },
   async loadAsync() {
-    const tokenResponse = sessionStorage.getItem("tokenResponse");
+    const tokenResponse = storage.getItem("tokenResponse");
     if (tokenResponse) {
       return JSON.parse(tokenResponse) as OAuth2TokenResponseBody;
     } else {

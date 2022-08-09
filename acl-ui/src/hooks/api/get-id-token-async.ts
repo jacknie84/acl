@@ -12,7 +12,7 @@ export default function useGetIdTokenAsync() {
       return await getIdTokenAsync();
     } catch (error: any) {
       navigate("/", { replace: true, state: { from: location, error } });
-      return null;
+      throw error;
     }
   }, [getIdTokenAsync, navigate, location]);
 }
