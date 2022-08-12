@@ -1,8 +1,9 @@
 import { Table } from "react-bootstrap";
 import { generatePath, Link } from "react-router-dom";
-import { MemberSummary } from "../types";
+import { MemberAccount } from "src/hooks/api/member-account";
+import { displayDateTime } from "src/utils/format/date-time";
 
-type Props = { members: MemberSummary[] };
+type Props = { members: Partial<MemberAccount>[] };
 
 function MembersTable({ members }: Props) {
   return (
@@ -21,7 +22,7 @@ function MembersTable({ members }: Props) {
             <td>
               <Link to={generatePath("/members/:id/form", { id: `${id}` })}>{email}</Link>
             </td>
-            <td>{lastModifiedDate}</td>
+            <td>{displayDateTime(lastModifiedDate)}</td>
           </tr>
         ))}
       </tbody>

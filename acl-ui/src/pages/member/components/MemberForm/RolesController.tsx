@@ -1,10 +1,10 @@
 import { Col, Form, Row } from "react-bootstrap";
-import { Control, Controller, UseFormRegister } from "react-hook-form";
-import { SaveMember } from "../../types";
+import { Control, Controller } from "react-hook-form";
+import { MemberAccount } from "src/hooks/api/member-account";
 
-type Props = { isPending: boolean; control: Control<SaveMember>; register: UseFormRegister<SaveMember> };
+type Props = { isPending: boolean; control: Control<Partial<MemberAccount>> };
 
-function RolesController({ isPending, control, register }: Props) {
+function RolesController({ isPending, control }: Props) {
   return (
     <Controller
       name="roles"

@@ -1,19 +1,19 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useConfirmModal } from "src/components/confirm";
-import { waitingAsync } from "src/utils/promise";
+import { MemberAccount, usePostMemberAccountApi } from "src/hooks/api/member-account";
 import MemberForm from "./components/MemberForm";
-import { SaveMember } from "./types";
 
 function MemberRegister() {
   const navigate = useNavigate();
   const publish = useConfirmModal();
   const [isPending, setPending] = useState(false);
+  const createMemberAccountAsync = usePostMemberAccountApi();
   const onValid = useCallback(
-    async (member: SaveMember) => {
+    async (member: Partial<MemberAccount>) => {
       setPending(true);
       try {
-        await waitingAsync(1000);
+        await createMemberAccountAsync(member);
       } finally {
         setPending(false);
       }
@@ -22,14 +22,14 @@ function MemberRegister() {
         body: "회원이 생성 되었습니다.",
         onConfirm: ({ close }) => {
           close();
-          navigate(-1);
+          navigate("..");
         },
       });
     },
-    [publish, navigate],
+    [publish, navigate, createMemberAccountAsync],
   );
 
-  return <MemberForm isPending={isPending} submitHandlers={{ onValid }} onCancel={() => navigate(-1)} />;
+  return <MemberForm isPending={isPending} submitHandlers={{ onValid }} onCancel={() => navigate("..")} />;
 }
 
 export default MemberRegister;

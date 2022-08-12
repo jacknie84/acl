@@ -7,22 +7,22 @@ import { useNavigate } from "react-router-dom";
 import { useConfirmModal } from "src/components/confirm";
 import LoadingButton from "src/components/LoadingButton";
 import { FetchResponseError } from "src/hooks/api/api-operation";
-import { PutMe, useGetMeApi, usePutMeApi } from "src/hooks/api/me";
+import { PatchMePassword, useGetMeApi, usePatchMePasswordApi } from "src/hooks/api/me";
 import PasswordController from "./PasswordController";
 
 function Me() {
   const getMeAsync = useGetMeApi();
-  const putMeAsync = usePutMeApi();
+  const patchMePasswordAsync = usePatchMePasswordApi();
   const { data: me } = useQuery(["getMe"], () => getMeAsync());
-  const { control, register, handleSubmit, setError } = useForm<PutMe>();
+  const { control, register, handleSubmit, setError } = useForm<PatchMePassword>();
   const navigate = useNavigate();
   const [isPending, setPending] = useState(false);
   const publish = useConfirmModal();
   const onValid = useCallback(
-    async (me: PutMe) => {
+    async (me: PatchMePassword) => {
       setPending(true);
       try {
-        await putMeAsync(me);
+        await patchMePasswordAsync(me);
         publish({
           title: "안내",
           body: "내 정보가 저장 되었습니다.",
@@ -42,9 +42,9 @@ function Me() {
         setPending(false);
       }
     },
-    [navigate, publish, putMeAsync, setError],
+    [navigate, publish, patchMePasswordAsync, setError],
   );
-  const onInvalid = useCallback((error: FieldErrors<PutMe>) => {
+  const onInvalid = useCallback((error: FieldErrors<PatchMePassword>) => {
     console.log(error);
   }, []);
 

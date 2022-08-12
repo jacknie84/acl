@@ -1,24 +1,26 @@
-import { useCallback, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useConfirmModal } from "src/components/confirm";
-import { waitingAsync } from "src/utils/promise";
+import { MemberAccount, useGetMemberAccountApi, usePutMemberAccountApi } from "src/hooks/api/member-account";
 import MemberForm from "./components/MemberForm";
-import { MemberRole, SaveMember } from "./types";
 
 type Params = { memberId: string };
-
-const member = { email: "jacknie8407@gmail.com", password: "pass12", roles: ["ROLE_USER"] as MemberRole[] };
 
 function MemberDetail() {
   const navigate = useNavigate();
   const { memberId } = useParams<Params>();
+  const id = useMemo(() => parseInt(memberId!), [memberId]);
+  const getMemberAccountAsync = useGetMemberAccountApi(id);
+  const putMemberAccountAsync = usePutMemberAccountApi(id);
+  const { data: member } = useQuery(["getMemberAccount"], () => getMemberAccountAsync());
   const publish = useConfirmModal();
   const [isPending, setPending] = useState(false);
   const onValid = useCallback(
-    async (member: SaveMember) => {
+    async (member: Partial<MemberAccount>) => {
       setPending(true);
       try {
-        await waitingAsync(1000);
+        await putMemberAccountAsync(member);
       } finally {
         setPending(false);
       }
@@ -27,30 +29,34 @@ function MemberDetail() {
         body: "회원 정보가 수정 되었습니다.",
         onConfirm: ({ close }) => {
           close();
-          navigate(-1);
+          navigate("..");
         },
       });
     },
-    [publish, navigate],
+    [publish, navigate, putMemberAccountAsync],
   );
 
   return (
-    <MemberForm
-      member={{ id: memberId, ...member }}
-      isPending={isPending}
-      submitHandlers={{ onValid }}
-      onDelete={() => {
-        publish({
-          title: "안내",
-          body: "회원 정보가 삭제 되었습니다.",
-          onConfirm: ({ close }) => {
-            close();
-            navigate(-1);
-          },
-        });
-      }}
-      onCancel={() => navigate(-1)}
-    />
+    <>
+      {member && (
+        <MemberForm
+          member={member}
+          isPending={isPending}
+          submitHandlers={{ onValid }}
+          onDelete={() => {
+            publish({
+              title: "안내",
+              body: "회원 정보가 삭제 되었습니다.",
+              onConfirm: ({ close }) => {
+                close();
+                navigate("..");
+              },
+            });
+          }}
+          onCancel={() => navigate("..")}
+        />
+      )}
+    </>
   );
 }
 

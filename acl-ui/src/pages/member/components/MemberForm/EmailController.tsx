@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { Control, Controller, UseFormRegister } from "react-hook-form";
+import { MemberAccount } from "src/hooks/api/member-account";
 import { isEmail } from "src/utils/validation";
-import { SaveMember } from "../../types";
 
-type Props = { isPending: boolean; control: Control<SaveMember>; register: UseFormRegister<SaveMember> };
+type Props = { isPending: boolean; control: Control<Partial<MemberAccount>>; register: UseFormRegister<Partial<MemberAccount>> };
 
 function EmailController({ isPending, control, register }: Props) {
   useEffect(() => {

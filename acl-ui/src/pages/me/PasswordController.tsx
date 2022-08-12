@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { Control, Controller, UseFormRegister } from "react-hook-form";
-import { PutMe } from "src/hooks/api/me";
+import { PatchMePassword } from "src/hooks/api/me";
 
 type Props = {
   isPending: boolean;
-  control: Control<PutMe>;
-  register: UseFormRegister<PutMe>;
+  control: Control<PatchMePassword>;
+  register: UseFormRegister<PatchMePassword>;
   label: string;
-  name: keyof PutMe;
+  name: keyof PatchMePassword;
   placeholder: string;
 };
 

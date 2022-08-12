@@ -7,12 +7,15 @@ export default function useGetIdTokenAsync() {
   const location = useLocation();
   const { getIdTokenAsync } = useAuth();
 
-  return useCallback(async () => {
-    try {
-      return await getIdTokenAsync();
-    } catch (error: any) {
-      navigate("/", { replace: true, state: { from: location, error } });
-      throw error;
-    }
-  }, [getIdTokenAsync, navigate, location]);
+  return useCallback(
+    async (forceRefreshToken?: boolean) => {
+      try {
+        return await getIdTokenAsync(forceRefreshToken);
+      } catch (error: any) {
+        navigate("/", { replace: true, state: { from: location, error } });
+        throw error;
+      }
+    },
+    [getIdTokenAsync, navigate, location],
+  );
 }
