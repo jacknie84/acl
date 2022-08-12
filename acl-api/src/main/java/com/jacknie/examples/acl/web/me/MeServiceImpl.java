@@ -27,14 +27,14 @@ public class MeServiceImpl implements MeService {
     }
 
     @Override
-    public void updateMe(Jwt jwt, PutMeDto me) {
+    public void updateMePassword(Jwt jwt, PatchMePasswordDto dto) {
         String email = jwt.getSubject();
-        accountRepository.findByEmail(email).ifPresent(entity -> updateMe(entity, me));
+        accountRepository.findByEmail(email).ifPresent(entity -> updateMePassword(entity, dto));
     }
 
-    private void updateMe(MemberAccount entity, PutMeDto me) {
-        if (passwordEncoder.matches(me.getOrgPassword(), entity.getPassword())) {
-            String newPassword = passwordEncoder.encode(me.getNewPassword());
+    private void updateMePassword(MemberAccount entity, PatchMePasswordDto dto) {
+        if (passwordEncoder.matches(dto.getOrgPassword(), entity.getPassword())) {
+            String newPassword = passwordEncoder.encode(dto.getNewPassword());
             entity.setPassword(newPassword);
             accountRepository.save(entity);
         } else {

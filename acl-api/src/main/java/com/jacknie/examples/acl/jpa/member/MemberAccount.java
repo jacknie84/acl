@@ -8,7 +8,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,11 +26,18 @@ public class MemberAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
+
+    @Builder.Default
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "MemberRole", joinColumns = @JoinColumn(name = "accountId", referencedColumnName = "id"))
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Set<MemberRole> roles = new LinkedHashSet<>();
 
     @LastModifiedDate
     @Column(nullable = false)

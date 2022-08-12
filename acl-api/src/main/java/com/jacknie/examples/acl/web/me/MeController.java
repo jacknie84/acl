@@ -21,9 +21,9 @@ public class MeController {
         return ResponseEntity.ok(me);
     }
 
-    @PutMapping
-    public ResponseEntity<?> putMe(@AuthenticationPrincipal Jwt jwt, @RequestBody @Valid PutMeDto me) {
-        meService.updateMe(jwt, me);
+    @PatchMapping("/password")
+    public ResponseEntity<?> patchMePassword(@AuthenticationPrincipal Jwt jwt, @RequestBody @Valid PatchMePasswordDto dto) {
+        meService.updateMePassword(jwt, dto);
         return ResponseEntity.noContent().build();
     }
 }

@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class PutMeDto {
+public class PatchMePasswordDto {
 
     @NotBlank
     @Length(min = 6, max = 15)

@@ -6,5 +6,5 @@ public interface MeService {
 
     MeDto getMe(Jwt jwt);
 
-    void updateMe(Jwt jwt, PutMeDto me);
+    void updateMePassword(Jwt jwt, PatchMePasswordDto dto);
 }

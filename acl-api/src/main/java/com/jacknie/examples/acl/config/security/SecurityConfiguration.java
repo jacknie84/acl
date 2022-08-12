@@ -47,7 +47,7 @@ public class SecurityConfiguration {
     private final MemberAccountRepository accountRepository;
 
     @Bean
-    @Order(2)
+    @Order(1)
     public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
         applyDefaultSecurity(http);
         return http
@@ -60,11 +60,11 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Order(3)
+    @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
             .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
-            .requestMatcher(new NegatedRequestMatcher(new AntPathRequestMatcher("/test/**")))
+            .requestMatchers(configurer -> configurer.mvcMatchers("/login"))
             .authorizeHttpRequests(configurer -> configurer.anyRequest().authenticated())
             // Form login handles the redirect to the login page from the
             // authorization server filter chain
@@ -73,13 +73,15 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Order(1)
+    @Order(3)
     public SecurityFilterChain resourceSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
+            .csrf().disable()
             .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
-            .requestMatchers(configurer -> configurer.mvcMatchers("/me"))
+            .requestMatcher(new NegatedRequestMatcher(new AntPathRequestMatcher("/test/**")))
             .oauth2ResourceServer(configurer -> configurer.jwt().decoder(jwtDecoder(jwkSource())))
-            .authorizeRequests(configurer -> configurer.anyRequest().authenticated())
+            .authorizeRequests(configurer -> configurer
+                .anyRequest().authenticated())
             .build();
     }
 
