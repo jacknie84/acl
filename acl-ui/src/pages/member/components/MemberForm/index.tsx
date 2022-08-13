@@ -26,7 +26,9 @@ function MemberForm({
   onCancel,
   onDelete,
 }: Props) {
-  const { control, register, handleSubmit, setError } = useForm<Partial<MemberAccount>>({ defaultValues: member });
+  const { control, register, handleSubmit, setError } = useForm<Partial<MemberAccount>>({
+    defaultValues: member,
+  });
   const deleteMemberAccountAsync = useDeleteMemberAccountApi(member.id as number);
   const onClickDelete = useDeleteEventListener(async () => await deleteMemberAccountAsync(), onDelete);
   const onValid = useCallback(

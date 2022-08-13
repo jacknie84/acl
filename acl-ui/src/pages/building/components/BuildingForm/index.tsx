@@ -1,9 +1,8 @@
 import { Button, Form, Stack } from "react-bootstrap";
 import { FieldErrors, useForm } from "react-hook-form";
 import LoadingButton from "src/components/LoadingButton";
+import { SaveBuilding, useDeleteBuildingApi } from "src/hooks/api/building";
 import useDeleteEventListener from "src/hooks/delete-event-listener";
-import { waitingAsync } from "src/utils/promise";
-import { SaveBuilding } from "../../types";
 import NameController from "./NameController";
 
 type Props = {
@@ -22,7 +21,8 @@ function BuildingForm({
   onDelete,
 }: Props) {
   const { control, register, handleSubmit } = useForm<SaveBuilding>({ defaultValues: building });
-  const onClickDelete = useDeleteEventListener(() => waitingAsync(1000), onDelete);
+  const deleteBuildingAsync = useDeleteBuildingApi(building.id as number);
+  const onClickDelete = useDeleteEventListener(async () => await deleteBuildingAsync(), onDelete);
 
   return (
     <Form onSubmit={handleSubmit(onValid, onInvalid)}>

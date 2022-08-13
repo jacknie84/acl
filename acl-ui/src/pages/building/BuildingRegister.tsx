@@ -1,19 +1,19 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useConfirmModal } from "src/components/confirm";
-import { waitingAsync } from "src/utils/promise";
+import { SaveBuilding, usePostBuildingApi } from "src/hooks/api/building";
 import BuildingForm from "./components/BuildingForm";
-import { SaveBuilding } from "./types";
 
 function BuildingRegister() {
   const navigate = useNavigate();
   const publish = useConfirmModal();
+  const postBuildingAsync = usePostBuildingApi();
   const [isPending, setPending] = useState(false);
   const onValid = useCallback(
     async (building: SaveBuilding) => {
       setPending(true);
       try {
-        await waitingAsync(1000);
+        await postBuildingAsync(building);
       } finally {
         setPending(false);
       }
@@ -26,10 +26,10 @@ function BuildingRegister() {
         },
       });
     },
-    [publish, navigate],
+    [publish, navigate, postBuildingAsync],
   );
 
-  return <BuildingForm isPending={isPending} submitHandlers={{ onValid }} onCancel={() => navigate(-1)}></BuildingForm>;
+  return <BuildingForm isPending={isPending} submitHandlers={{ onValid }} onCancel={() => navigate("..")}></BuildingForm>;
 }
 
 export default BuildingRegister;

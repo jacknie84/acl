@@ -1,8 +1,9 @@
 import { Table } from "react-bootstrap";
 import { generatePath, Link } from "react-router-dom";
-import { BuildingSummary } from "../types";
+import { Building } from "src/hooks/api/building";
+import { displayDateTime } from "src/utils/format/date-time";
 
-type Props = { buildings: BuildingSummary[] };
+type Props = { buildings: Building[] };
 
 function BuildingsTable({ buildings }: Props) {
   return (
@@ -21,7 +22,7 @@ function BuildingsTable({ buildings }: Props) {
             <td>
               <Link to={generatePath("/buildings/:id/tabs/form", { id: `${id}` })}>{name}</Link>
             </td>
-            <td>{lastModifiedDate}</td>
+            <td>{displayDateTime(lastModifiedDate)}</td>
           </tr>
         ))}
       </tbody>

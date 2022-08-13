@@ -13,7 +13,7 @@ function MemberDetail() {
   const id = useMemo(() => parseInt(memberId!), [memberId]);
   const getMemberAccountAsync = useGetMemberAccountApi(id);
   const putMemberAccountAsync = usePutMemberAccountApi(id);
-  const { data: member } = useQuery(["getMemberAccount"], () => getMemberAccountAsync());
+  const { data, refetch } = useQuery(["getMemberAccount", id], () => getMemberAccountAsync());
   const publish = useConfirmModal();
   const [isPending, setPending] = useState(false);
   const onValid = useCallback(
@@ -21,6 +21,7 @@ function MemberDetail() {
       setPending(true);
       try {
         await putMemberAccountAsync(member);
+        await refetch();
       } finally {
         setPending(false);
       }
@@ -33,14 +34,14 @@ function MemberDetail() {
         },
       });
     },
-    [publish, navigate, putMemberAccountAsync],
+    [publish, navigate, putMemberAccountAsync, refetch],
   );
 
   return (
     <>
-      {member && (
+      {data && (
         <MemberForm
-          member={member}
+          member={data}
           isPending={isPending}
           submitHandlers={{ onValid }}
           onDelete={() => {

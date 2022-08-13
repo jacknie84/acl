@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { Control, Controller, UseFormRegister } from "react-hook-form";
-import { SaveBuilding } from "../../types";
+import { SaveBuilding } from "src/hooks/api/building";
 
 type Props = { isPending: boolean; control: Control<SaveBuilding>; register: UseFormRegister<SaveBuilding> };
 
@@ -18,7 +18,7 @@ function NameController({ isPending, control, register }: Props) {
       name="name"
       control={control}
       render={({ field: { value, ...otherProps }, fieldState: { error }, formState: { isSubmitted } }) => (
-        <Form.Group className="mt-3" controlId="email">
+        <Form.Group className="mt-3" controlId="name">
           <Form.Label>건물 이름</Form.Label>
           <Form.Control
             disabled={isPending}

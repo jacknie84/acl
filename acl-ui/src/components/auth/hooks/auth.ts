@@ -28,8 +28,8 @@ function useAuth() {
     },
     [authenticate],
   );
-  const getIdTokenAsync = useCallback(
-    async (forceRefreshToken: boolean = false) => {
+  const getIdTokenAsync = useCallback<(forceRefreshToken?: boolean) => Promise<string>>(
+    async (forceRefreshToken = false) => {
       const token = await tokenStore.loadAsync();
       if (forceRefreshToken) {
         const newToken = await refreshTokenAsync(token);
