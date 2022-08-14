@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useConfirmModal } from "src/components/confirm";
 import { SaveBuilding, useGetBuildingApi, usePutBuildingApi } from "src/hooks/api/building";
@@ -10,10 +10,9 @@ function BuildingDetail() {
   const { buildingId } = useParams();
   const publish = useConfirmModal();
   const [isPending, setPending] = useState(false);
-  const id = useMemo(() => parseInt(buildingId!), [buildingId]);
-  const getBuildingAsync = useGetBuildingApi(id);
-  const putBuildingAsync = usePutBuildingApi(id);
-  const { data, refetch } = useQuery(["getBuilding", id], () => getBuildingAsync());
+  const getBuildingAsync = useGetBuildingApi(buildingId!);
+  const putBuildingAsync = usePutBuildingApi(buildingId!);
+  const { data, refetch } = useQuery(["getBuilding", buildingId], () => getBuildingAsync());
   const onValid = useCallback(
     async (building: SaveBuilding) => {
       setPending(true);

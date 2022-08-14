@@ -45,7 +45,7 @@ export default function useApiOperation<I, O>(operation: ApiOperation<I, O>) {
 
   return useCallback(
     async (input: I, options: RequestOptions = {}) => {
-      const exchange: Exchanger<O> = async (path, init = {}) => getResponseAsync(options, path, init);
+      const exchange: Exchanger<O> = (path, init = {}) => getResponseAsync(options, path, init);
       return await operation(exchange, input);
     },
     [operation, getResponseAsync],

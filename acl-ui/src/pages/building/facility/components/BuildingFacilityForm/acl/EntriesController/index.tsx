@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { Card, Form, Stack } from "react-bootstrap";
 import { Control, useFieldArray, UseFormRegister } from "react-hook-form";
-import { AclEntry, SaveBuildingFacility } from "../../../../types";
+import { AclEntry, SaveBuildingFacility } from "src/hooks/api/building-facility";
 import EntryControl from "./EntryControl";
 import FetchParentEntries from "./FetchParentEntries";
 import InheritingEntriesCard from "./InheritingEntriesCard";

@@ -46,6 +46,7 @@ function Main() {
         <Routes>
           <Route path="/" element={<Outlet />}>
             <Route path="" element={<Navigate to="/getting-start" replace />} />
+            <Route path="callback" element={<Outlet />} />
             <Route path="getting-start" element={<GettingStart />} />
             <Route element={<Layout />}>
               <Route path="home" element={<PageView title="대시보드" />}>

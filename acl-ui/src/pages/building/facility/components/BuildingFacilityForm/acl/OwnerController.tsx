@@ -8,7 +8,7 @@ import {
   UseFormRegister,
   UseFormStateReturn,
 } from "react-hook-form";
-import { SaveBuildingFacility } from "../../../types";
+import { SaveBuildingFacility } from "src/hooks/api/building-facility";
 
 type Props = { isPending: boolean; control: Control<SaveBuildingFacility>; register: UseFormRegister<SaveBuildingFacility> };
 

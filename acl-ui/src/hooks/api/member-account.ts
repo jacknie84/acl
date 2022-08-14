@@ -15,17 +15,17 @@ export function usePostMemberAccountApi() {
   );
 }
 
-export function useGetMemberAccountApi(id: number) {
+export function useGetMemberAccountApi(id: number | string) {
   return useApiOperation<void, MemberAccount>((exchange) => exchange(`/member/accounts/${id}`));
 }
 
-export function usePutMemberAccountApi(id: number) {
+export function usePutMemberAccountApi(id: number | string) {
   return useApiOperation<PostMemberAccount, void>((exchange, member) =>
     exchange(`/member/accounts/${id}`, { method: "put", body: JSON.stringify(member) }),
   );
 }
 
-export function useDeleteMemberAccountApi(id: number) {
+export function useDeleteMemberAccountApi(id: number | string) {
   return useApiOperation<void, void>((exchange) => exchange(`/member/accounts/${id}`, { method: "delete" }));
 }
 

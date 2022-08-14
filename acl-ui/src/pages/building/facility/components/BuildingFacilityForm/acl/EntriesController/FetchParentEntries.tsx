@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { TbBookDownload } from "react-icons/tb";
-import { AclEntry } from "src/pages/building/facility/types";
+import { AclEntry } from "src/hooks/api/building-facility";
 import { waitingAsync } from "src/utils/promise";
 
 type Props = { isPending: boolean; onFetching: (isFetching: boolean) => void; onFetched: (entries: AclEntry[]) => void };

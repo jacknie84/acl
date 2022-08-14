@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useConfirmModal } from "src/components/confirm";
 import { MemberAccount, useGetMemberAccountApi, usePutMemberAccountApi } from "src/hooks/api/member-account";
@@ -10,10 +10,9 @@ type Params = { memberId: string };
 function MemberDetail() {
   const navigate = useNavigate();
   const { memberId } = useParams<Params>();
-  const id = useMemo(() => parseInt(memberId!), [memberId]);
-  const getMemberAccountAsync = useGetMemberAccountApi(id);
-  const putMemberAccountAsync = usePutMemberAccountApi(id);
-  const { data, refetch } = useQuery(["getMemberAccount", id], () => getMemberAccountAsync());
+  const getMemberAccountAsync = useGetMemberAccountApi(memberId!);
+  const putMemberAccountAsync = usePutMemberAccountApi(memberId!);
+  const { data, refetch } = useQuery(["getMemberAccount", memberId], () => getMemberAccountAsync());
   const publish = useConfirmModal();
   const [isPending, setPending] = useState(false);
   const onValid = useCallback(

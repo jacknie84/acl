@@ -1,21 +1,27 @@
-import { useMemo } from "react";
+import { useCallback, useContext } from "react";
 import { Table } from "react-bootstrap";
-import { Link, useSearchParams } from "react-router-dom";
-import { BuildingFacilitySummary } from "../types";
+import { Link } from "react-router-dom";
+import { BuildingFacility } from "src/hooks/api/building-facility";
+import { displayDateTime } from "src/utils/format/date-time";
+import BuildingFacilityContext from "../contexts/BuildingFacilityContext";
 
 type Props = {
-  facilities: BuildingFacilitySummary[];
+  facilities: BuildingFacility[];
 };
 
 function BuildingFacilitiesTable({ facilities }: Props) {
-  const [searchParams] = useSearchParams();
-  const path = useMemo(() => {
-    if (searchParams.has("facilityPath")) {
-      return JSON.parse(searchParams.get("facilityPath")!) as string[];
-    } else {
-      return [];
-    }
-  }, [searchParams]);
+  const { facilityPath } = useContext(BuildingFacilityContext);
+  const getFacilityPathParams = useCallback(
+    (facility: BuildingFacility) => {
+      if (facilityPath.every(Boolean)) {
+        const ids = facilityPath.map(({ id }) => id);
+        return new URLSearchParams({ facilityPath: JSON.stringify([...ids, facility.id]) });
+      } else {
+        return new URLSearchParams();
+      }
+    },
+    [facilityPath],
+  );
 
   return (
     <Table striped bordered hover>
@@ -28,13 +34,17 @@ function BuildingFacilitiesTable({ facilities }: Props) {
       </thead>
       <tbody>
         {facilities.length > 0 ? (
-          facilities.map(({ id, name, lastModifiedDate }) => (
-            <tr key={id}>
-              <td>{id}</td>
-              <td>
-                <Link to={`?${new URLSearchParams({ facilityPath: JSON.stringify([...path, id]) })}`}>{name}</Link>
-              </td>
-              <td>{lastModifiedDate}</td>
+          facilities.map((facility, index) => (
+            <tr key={index}>
+              {facility && (
+                <>
+                  <td>{facility.id}</td>
+                  <td>
+                    <Link to={`?${getFacilityPathParams(facility)}`}>{facility.name}</Link>
+                  </td>
+                  <td>{displayDateTime(facility.lastModifiedDate)}</td>
+                </>
+              )}
             </tr>
           ))
         ) : (

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { TiDelete } from "react-icons/ti";
-import { AclEntry } from "src/pages/building/facility/types";
+import { AclEntry } from "src/hooks/api/building-facility";
 
 type Props = {
   isDisabled?: boolean;

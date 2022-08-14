@@ -15,17 +15,17 @@ export function usePostBuildingApi() {
   );
 }
 
-export function useGetBuildingApi(id: number) {
+export function useGetBuildingApi(id: number | string) {
   return useApiOperation<void, Building>((exchange) => exchange(`/buildings/${id}`));
 }
 
-export function usePutBuildingApi(id: number) {
+export function usePutBuildingApi(id: number | string) {
   return useApiOperation<SaveBuilding, void>((exchange, member) =>
     exchange(`/buildings/${id}`, { method: "put", body: JSON.stringify(member) }),
   );
 }
 
-export function useDeleteBuildingApi(id: number) {
+export function useDeleteBuildingApi(id: number | string) {
   return useApiOperation<void, void>((exchange) => exchange(`/buildings/${id}`, { method: "delete" }));
 }
 

@@ -22,7 +22,7 @@ function BuildingForm({
 }: Props) {
   const { control, register, handleSubmit } = useForm<SaveBuilding>({ defaultValues: building });
   const deleteBuildingAsync = useDeleteBuildingApi(building.id as number);
-  const onClickDelete = useDeleteEventListener(async () => await deleteBuildingAsync(), onDelete);
+  const onClickDelete = useDeleteEventListener(deleteBuildingAsync, onDelete);
 
   return (
     <Form onSubmit={handleSubmit(onValid, onInvalid)}>

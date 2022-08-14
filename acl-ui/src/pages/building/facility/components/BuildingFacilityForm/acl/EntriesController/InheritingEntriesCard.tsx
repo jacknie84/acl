@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, Stack } from "react-bootstrap";
-import { AclEntry } from "src/pages/building/facility/types";
+import { AclEntry } from "src/hooks/api/building-facility";
 import EntryControl from "./EntryControl";
 
 function InheritingEntriesCard() {
