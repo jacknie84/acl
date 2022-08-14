@@ -61,7 +61,8 @@ public class BuildingFacilityCustomRepositoryImpl extends QuerydslRepositorySupp
             buildingFacility.building.id.eq(buildingId),
             ifEmptyNone(buildingFacility.name::contains, dto.getSearch()),
             ifNullNone(buildingFacility.parent.id::eq, dto.getParentId()),
-            ifFalseNone(buildingFacility.parent.id::isNull, dto.isParentIdIsNull())
+            ifFalseNone(buildingFacility.parent.id::isNull, dto.isNullParentId()),
+            ifEmptyNone(buildingFacility.id::in, dto.getIds())
         };
     }
 }
