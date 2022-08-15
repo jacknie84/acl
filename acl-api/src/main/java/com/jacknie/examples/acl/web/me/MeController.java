@@ -26,4 +26,5 @@ public class MeController {
         meService.updateMePassword(jwt, dto);
         return ResponseEntity.noContent().build();
     }
+
 }

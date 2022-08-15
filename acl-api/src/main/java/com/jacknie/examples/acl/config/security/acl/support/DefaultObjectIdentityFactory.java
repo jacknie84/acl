@@ -1,14 +1,13 @@
 package com.jacknie.examples.acl.config.security.acl.support;
 
-import com.jacknie.examples.acl.config.security.acl.AclDomainConfig;
 import com.jacknie.examples.acl.config.security.acl.AclIdentifiable;
+import com.jacknie.examples.acl.config.security.acl.domain.AclDomainConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 public class DefaultObjectIdentityFactory implements ObjectIdentityFactory {

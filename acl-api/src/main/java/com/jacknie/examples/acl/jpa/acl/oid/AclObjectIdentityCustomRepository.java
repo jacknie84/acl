@@ -1,5 +1,8 @@
 package com.jacknie.examples.acl.jpa.acl.oid;
 
+import com.jacknie.examples.acl.web.acl.AclFilterDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.ObjectIdentity;
 
 import java.util.List;
@@ -57,4 +60,6 @@ public interface AclObjectIdentityCustomRepository {
      * @return 객체 식별 정보 소스 데이터 자식 목록
      */
     List<ObjectIdentitySource> findChildrenByObjectIdentity(ObjectIdentity oid);
+
+    Page<AclObjectIdentity> findAll(AclFilterDto dto, Pageable pageable);
 }

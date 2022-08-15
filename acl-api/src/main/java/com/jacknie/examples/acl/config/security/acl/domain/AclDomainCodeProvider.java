@@ -1,4 +1,4 @@
-package com.jacknie.examples.acl.config.security.acl;
+package com.jacknie.examples.acl.config.security.acl.domain;
 
 public interface AclDomainCodeProvider {
 

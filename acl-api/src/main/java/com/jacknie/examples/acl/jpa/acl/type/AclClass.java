@@ -19,7 +19,7 @@ public class AclClass {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "class", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String className;
 
     private String classIdType;

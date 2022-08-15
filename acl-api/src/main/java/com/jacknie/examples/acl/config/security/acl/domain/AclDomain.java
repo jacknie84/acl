@@ -1,5 +1,6 @@
-package com.jacknie.examples.acl.config.security.acl;
+package com.jacknie.examples.acl.config.security.acl.domain;
 
+import com.jacknie.examples.acl.config.security.acl.AclIdentifiable;
 import lombok.Data;
 
 @Data

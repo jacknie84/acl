@@ -1,16 +1,31 @@
 package com.jacknie.examples.acl.jpa.acl.oid;
 
+import com.jacknie.examples.acl.jpa.acl.sid.SidType;
+import com.jacknie.examples.acl.jpa.member.MemberAccount;
+import com.jacknie.examples.acl.web.acl.AclFilterDto;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static com.jacknie.examples.acl.jpa.QuerydslPredicateUtils.ifEmptyNone;
+import static com.jacknie.examples.acl.jpa.acl.entry.QAclEntry.aclEntry;
 import static com.jacknie.examples.acl.jpa.acl.oid.QAclObjectIdentity.aclObjectIdentity;
+import static com.jacknie.examples.acl.jpa.member.QMemberAccount.memberAccount;
 import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.types.dsl.Expressions.anyOf;
+import static com.querydsl.jpa.JPAExpressions.selectOne;
 
+@SuppressWarnings("ALL")
 public class AclObjectIdentityCustomRepositoryImpl extends QuerydslRepositorySupport implements AclObjectIdentityCustomRepository {
 
     private final QAclSourceBasePart aclSourceBasePart = new QAclSourceBasePart(
@@ -36,13 +51,14 @@ public class AclObjectIdentityCustomRepositoryImpl extends QuerydslRepositorySup
 
     @Override
     public boolean existsByObjectIdentity(ObjectIdentity oid) {
-        return from(aclObjectIdentity)
-                .leftJoin(aclObjectIdentity.objectIdClass)
-                .where(
-                    aclObjectIdentity.objectIdIdentity.eq(oid.getIdentifier().toString()),
-                    aclObjectIdentity.objectIdClass.className.eq(oid.getType())
-                )
-                .fetchCount() > 0;
+        Long existsId = from(aclObjectIdentity).select(aclObjectIdentity.id)
+            .leftJoin(aclObjectIdentity.objectIdClass)
+            .where(
+                aclObjectIdentity.objectIdIdentity.eq(oid.getIdentifier().toString()),
+                aclObjectIdentity.objectIdClass.className.eq(oid.getType())
+            )
+            .fetchFirst();
+        return existsId != null;
     }
 
     @Override
@@ -120,10 +136,69 @@ public class AclObjectIdentityCustomRepositoryImpl extends QuerydslRepositorySup
             .fetch();
     }
 
+    @Override
+    public Page<AclObjectIdentity> findAll(AclFilterDto dto, Pageable pageable) {
+        JPQLQuery<AclObjectIdentity> query = from(aclObjectIdentity)
+            .join(aclObjectIdentity.objectIdClass)
+            .join(aclObjectIdentity.ownerSid)
+            .where(toPredicates(dto));
+        long total = query.fetchCount();
+        if (total > 0) {
+            List<AclObjectIdentity> content = getQuerydsl().applyPagination(pageable, query).fetch();
+            return new PageImpl<>(content, pageable, total);
+        } else {
+            return Page.empty(pageable);
+        }
+    }
+
     private JPQLQuery<AclSourceBasePart> getAclSourceBasePartQuery() {
         return from(aclObjectIdentity).select(aclSourceBasePart)
             .leftJoin(aclObjectIdentity.ownerSid)
             .leftJoin(aclObjectIdentity.objectIdClass)
             .leftJoin(aclObjectIdentity.parentObject);
+    }
+
+    private Predicate[] toPredicates(AclFilterDto dto) {
+        return new Predicate[] {
+            ifEmptyNone(aclObjectIdentity.objectIdClass.className::in, dto.getDomainCodes()),
+            ifEmptyNone(this::conditionalizeOwnerSid, BooleanExpression::or, dto.getOwnerSids()),
+            ifEmptyNone(this::existsByEntrySids, dto.getEntrySids()),
+            ifEmptyNone(this::existsByAccountIds, dto.getAccountIds())
+        };
+    }
+
+    private BooleanExpression conditionalizeOwnerSid(AclFilterDto.Sid sid) {
+        return aclObjectIdentity.ownerSid.type.eq(sid.getType()).and(aclObjectIdentity.ownerSid.sid.eq(sid.getSid()));
+    }
+
+    private BooleanExpression existsByEntrySids(Set<AclFilterDto.Sid> entrySids) {
+        return selectOne().from(aclEntry)
+            .innerJoin(aclEntry.sid)
+            .where(
+                aclEntry.objectIdentity.id.eq(aclObjectIdentity.id),
+                ifEmptyNone(this::conditionalizeEntrySid, BooleanExpression::or, entrySids)
+            )
+            .exists();
+    }
+
+    private BooleanExpression conditionalizeEntrySid(AclFilterDto.Sid sid) {
+        return aclEntry.sid.type.eq(sid.getType()).and(aclEntry.sid.sid.eq(sid.getSid()));
+    }
+
+    private BooleanExpression existsByAccountIds(Set<Long> accountIds) {
+        List<MemberAccount> accounts = from(memberAccount)
+            .leftJoin(memberAccount.roles).fetchJoin()
+            .where(memberAccount.id.in(accountIds))
+            .fetch();
+        Set<AclFilterDto.Sid> sids = accounts.stream()
+            .flatMap(account -> Stream.concat(
+                Stream.of(AclFilterDto.Sid.builder().type(SidType.PRINCIPAL).sid(account.getId().toString()).build()),
+                account.getRoles().stream().map(role -> AclFilterDto.Sid.builder().type(SidType.GRANTED_AUTHORITY).sid(role.name()).build())
+            ))
+            .collect(Collectors.toSet());
+        return anyOf(
+            ifEmptyNone(this::conditionalizeOwnerSid, BooleanExpression::or, sids),
+            ifEmptyNone(this::existsByEntrySids, sids)
+        );
     }
 }

@@ -13,4 +13,6 @@ public interface AclEntryRepository extends JpaRepository<AclEntry, Long>, AclEn
      * @return ACE 목록
      */
     List<AclEntry> findAllByObjectIdentity(AclObjectIdentity aclOid);
+
+    List<AclEntry> findAllByObjectIdentityId(long id);
 }

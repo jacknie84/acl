@@ -1,14 +1,14 @@
 package com.jacknie.examples.acl.config.security.acl;
 
+import com.jacknie.examples.acl.config.security.acl.domain.AclAdmin;
+import com.jacknie.examples.acl.config.security.acl.domain.AclDomainConfig;
 import com.jacknie.examples.acl.config.security.acl.support.*;
 import com.jacknie.examples.acl.jpa.acl.entry.AclEntryRepository;
 import com.jacknie.examples.acl.jpa.acl.oid.AclObjectIdentityRepository;
 import com.jacknie.examples.acl.jpa.acl.sid.AclSidRepository;
 import com.jacknie.examples.acl.jpa.acl.type.AclClassRepository;
-import com.jacknie.examples.acl.jpa.building.Building;
 import com.jacknie.examples.acl.jpa.member.MemberRole;
 import com.jacknie.examples.acl.web.building.facility.BuildingFacilityDto;
-import com.jacknie.examples.acl.web.member.MemberAccountDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -22,7 +22,8 @@ import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.PermissionGrantingStrategy;
 
-import static com.jacknie.examples.acl.config.security.acl.AclDomainCodes.*;
+import static com.jacknie.examples.acl.config.security.acl.domain.AclDomainCodes.ADMIN;
+import static com.jacknie.examples.acl.config.security.acl.domain.AclDomainCodes.BUILDING_FACILITY;
 
 @Configuration
 @RequiredArgsConstructor
@@ -50,9 +51,8 @@ public class AclConfiguration {
     @Bean
     public AclDomainConfig aclDomainConfig() {
         return AclDomainConfig.builder()
-            .addDomain(MemberAccountDto.class, MEMBER)
-            .addDomain(Building.class, BUILDING)
-            .addDomain(BuildingFacilityDto.class, BUILDING_FACILITY)
+            .addDomain(ADMIN, AclAdmin.class)
+            .addDomain(BUILDING_FACILITY, BuildingFacilityDto.class)
             .addIdConverter(Long::parseLong, Long.class)
             .build();
     }

@@ -1,5 +1,6 @@
-package com.jacknie.examples.acl.config.security.acl;
+package com.jacknie.examples.acl.config.security.acl.domain;
 
+import com.jacknie.examples.acl.config.security.acl.AclIdentifiable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
@@ -9,7 +10,6 @@ import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.Function;
 
 @Getter
 @RequiredArgsConstructor
@@ -41,11 +41,11 @@ public class AclDomainConfig {
         private final List<AclDomain> domains = new ArrayList<>();
         private final GenericConversionService idConversionService = new GenericConversionService();
 
-        public Builder addDomain(Class<? extends AclIdentifiable> type, String domainCode) {
-            Assert.notNull(type, "type cannot be null");
+        public Builder addDomain(String domainCode, Class<? extends AclIdentifiable> type) {
             Assert.hasText(domainCode, "domainCode cannot be blank");
-            Assert.isTrue(domains.stream().noneMatch(domain -> domain.getType().equals(type)), () -> "already exists type: " + type);
+            Assert.notNull(type, "type cannot be null");
             Assert.isTrue(domains.stream().noneMatch(domain -> domain.getCode().equals(domainCode)), () -> "already exists domain code: " + domainCode);
+            Assert.isTrue(domains.stream().noneMatch(domain -> domain.getType().equals(type)), () -> "already exists type: " + type);
             AclDomain domain = new AclDomain(type, domainCode);
             domains.add(domain);
             return this;
