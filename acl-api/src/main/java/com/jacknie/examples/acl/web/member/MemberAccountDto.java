@@ -1,5 +1,6 @@
 package com.jacknie.examples.acl.web.member;
 
+import com.jacknie.examples.acl.config.security.acl.AclIdentifiable;
 import com.jacknie.examples.acl.jpa.member.MemberAccount;
 import com.jacknie.examples.acl.jpa.member.MemberRole;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import java.util.Set;
 
 @Data
 @Builder
-public class MemberAccountDto {
+public class MemberAccountDto implements AclIdentifiable {
     private Long id;
     private String email;
     private Set<MemberRole> roles;

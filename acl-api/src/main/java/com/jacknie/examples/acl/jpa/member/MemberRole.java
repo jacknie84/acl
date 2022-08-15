@@ -1,6 +1,13 @@
 package com.jacknie.examples.acl.jpa.member;
 
-public enum MemberRole {
+import org.springframework.security.core.GrantedAuthority;
 
-    ROLE_USER, ROLE_ADMIN
+public enum MemberRole implements GrantedAuthority {
+
+    ROLE_USER, ROLE_ADMIN;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }

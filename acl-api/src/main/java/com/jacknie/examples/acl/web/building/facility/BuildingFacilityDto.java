@@ -1,12 +1,13 @@
 package com.jacknie.examples.acl.web.building.facility;
 
+import com.jacknie.examples.acl.config.security.acl.AclIdentifiable;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
 import java.time.Instant;
 
 @Data
-public class BuildingFacilityDto {
+public class BuildingFacilityDto implements AclIdentifiable {
 
     private Long id;
 
