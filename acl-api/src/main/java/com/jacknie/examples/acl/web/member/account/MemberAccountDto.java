@@ -1,6 +1,6 @@
-package com.jacknie.examples.acl.web.member;
+package com.jacknie.examples.acl.web.member.account;
 
-import com.jacknie.examples.acl.config.security.acl.AclIdentifiable;
+import com.jacknie.examples.acl.config.security.acls.domain.AclIdentifiable;
 import com.jacknie.examples.acl.jpa.member.MemberAccount;
 import com.jacknie.examples.acl.jpa.member.MemberRole;
 import lombok.Builder;

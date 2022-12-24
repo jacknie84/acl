@@ -32,10 +32,7 @@ public class BuildingFacilityServiceImpl implements BuildingFacilityService {
         BuildingFacility.BuildingFacilityBuilder builder = BuildingFacility.builder()
             .building(building)
             .name(dto.getName());
-        Optional.ofNullable(dto.getParentId())
-            .map(parentId -> facilityRepository.findById(parentId)
-                .orElseThrow(() -> new HttpStatusException(HttpStatus.BAD_REQUEST)))
-            .ifPresent(builder::parent);
+        findParent(dto).ifPresent(builder::parent);
         return facilityRepository.save(builder.build()).getId();
     }
 
@@ -48,6 +45,7 @@ public class BuildingFacilityServiceImpl implements BuildingFacilityService {
     public void updateBuildingFacility(long buildingId, long id, SaveBuildingFacilityDto dto) {
         BuildingFacility entity = facilityRepository.findByBuildingIdAndId(buildingId, id)
             .orElseThrow(() -> new HttpStatusException(HttpStatus.NOT_FOUND));
+        findParent(dto).ifPresent(entity::setParent);
         entity.setName(dto.getName());
         facilityRepository.save(entity);
     }
@@ -67,6 +65,12 @@ public class BuildingFacilityServiceImpl implements BuildingFacilityService {
 
     private Building getBuilding(long buildingId) {
         return buildingRepository.findById(buildingId).orElseThrow(() -> new HttpStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    private Optional<BuildingFacility> findParent(SaveBuildingFacilityDto dto) {
+        return Optional.ofNullable(dto.getParentId())
+            .map(parentId -> facilityRepository.findById(parentId)
+                .orElseThrow(() -> new HttpStatusException(HttpStatus.BAD_REQUEST)));
     }
 
 }

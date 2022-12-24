@@ -1,6 +1,6 @@
 package com.jacknie.examples.acl.jpa.building;
 
-import com.jacknie.examples.acl.config.security.acl.AclIdentifiable;
+import com.jacknie.examples.acl.config.security.acls.domain.AclIdentifiable;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;

@@ -1,6 +1,6 @@
 package com.jacknie.examples.acl.jpa.acl.entry;
 
-import com.jacknie.examples.acl.jpa.acl.oid.AclObjectIdentity;
+import com.jacknie.examples.acl.jpa.acl.oid.AclOid;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,11 +8,9 @@ import java.util.List;
 public interface AclEntryRepository extends JpaRepository<AclEntry, Long>, AclEntryCustomRepository {
 
     /**
-     * ACE 목록 조회
-     * @param aclOid 객체 식별 정보 entity
+     * 객체 식별 정보에 해당하는 모든 ACE 목록을 조회
+     * @param oid 객체 식별 정보
      * @return ACE 목록
      */
-    List<AclEntry> findAllByObjectIdentity(AclObjectIdentity aclOid);
-
-    List<AclEntry> findAllByObjectIdentityId(long id);
+    List<AclEntry> findAllByOid(AclOid oid);
 }

@@ -1,4 +1,4 @@
-package com.jacknie.examples.acl.web.member;
+package com.jacknie.examples.acl.web.member.account;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

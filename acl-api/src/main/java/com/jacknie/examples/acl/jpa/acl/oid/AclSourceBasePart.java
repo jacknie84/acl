@@ -1,6 +1,6 @@
 package com.jacknie.examples.acl.jpa.acl.oid;
 
-import com.jacknie.examples.acl.jpa.acl.sid.SidType;
+import com.jacknie.examples.acl.config.security.acls.domain.SidType;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
@@ -8,14 +8,14 @@ import lombok.Data;
 public class AclSourceBasePart {
 
     /**
-     * 객체 식별 정보 아이디
+     * ACL 객체 아이디
      */
-    private final Long objectIdentityId;
+    private final Long aclObjectId;
 
     /**
-     * 부모 객체 식별 정보 아이디
+     * 부모 ACL 객체 아이디
      */
-    private final Long parentObjectIdentityId;
+    private final Long parentAclObjectId;
 
     /**
      * 부모의 ACE 목록이 ACL 로 부터 상속 여부
@@ -25,37 +25,37 @@ public class AclSourceBasePart {
     /**
      * 객체 식별 정보
      */
-    private final String objectIdIdentity;
+    private final String objectIdentifier;
 
     /**
-     * 객체 식별 정보 아이디 타입
+     * 도메인 아이디 변형 타입
      */
-    private final String classIdType;
+    private final String domainIdConverter;
 
     /**
-     * 객체 클래스 이름
+     * 도메인 코드
      */
-    private final String className;
+    private final String domainCode;
 
     /**
-     * 보안 식별 정보 타입
+     * SID 타입
      */
     private final SidType sidType;
 
     /**
-     * 보안 식별 정보
+     * SID 값
      */
-    private final String sid;
+    private final String sidValue;
 
     @QueryProjection
-    public AclSourceBasePart(Long objectIdentityId, Long parentObjectIdentityId, Boolean entriesInheriting, String objectIdIdentity, String classIdType, String className, SidType sidType, String sid) {
-        this.objectIdentityId = objectIdentityId;
-        this.parentObjectIdentityId = parentObjectIdentityId;
+    public AclSourceBasePart(Long aclObjectId, Long parentAclObjectId, Boolean entriesInheriting, String objectIdentifier, String domainIdConverter, String domainCode, SidType sidType, String sidValue) {
+        this.aclObjectId = aclObjectId;
+        this.parentAclObjectId = parentAclObjectId;
         this.entriesInheriting = entriesInheriting;
-        this.objectIdIdentity = objectIdIdentity;
-        this.classIdType = classIdType;
-        this.className = className;
+        this.objectIdentifier = objectIdentifier;
+        this.domainIdConverter = domainIdConverter;
+        this.domainCode = domainCode;
         this.sidType = sidType;
-        this.sid = sid;
+        this.sidValue = sidValue;
     }
 }

@@ -1,6 +1,6 @@
 package com.jacknie.examples.acl.jpa.member;
 
-import com.jacknie.examples.acl.web.member.MemberAccountsFilterDto;
+import com.jacknie.examples.acl.web.member.account.MemberAccountsFilterDto;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;

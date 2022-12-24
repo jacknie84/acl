@@ -23,4 +23,19 @@ public class HttpStatusException extends RuntimeException {
         super(cause);
         this.httpStatus = httpStatus;
     }
+
+    public static class NotFound extends HttpStatusException {
+
+        public NotFound() {
+            super(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.toString());
+        }
+
+        public NotFound(@Nullable String message) {
+            super(HttpStatus.NOT_FOUND, message);
+        }
+
+        public NotFound(Throwable cause) {
+            super(HttpStatus.NOT_FOUND, cause);
+        }
+    }
 }

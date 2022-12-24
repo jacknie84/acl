@@ -12,6 +12,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +26,10 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -35,7 +42,11 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration.applyDefaultSecurity;
 import static org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration.jwtDecoder;
@@ -75,11 +86,19 @@ public class SecurityConfiguration {
     @Bean
     @Order(3)
     public SecurityFilterChain resourceSecurityFilterChain(HttpSecurity http) throws Exception {
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            List<String> roles = jwt.getClaimAsStringList("roles");
+            return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+        });
+
         return http
             .csrf().disable()
             .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
             .requestMatcher(new NegatedRequestMatcher(new AntPathRequestMatcher("/test/**")))
-            .oauth2ResourceServer(configurer -> configurer.jwt().decoder(jwtDecoder(jwkSource())))
+            .oauth2ResourceServer(configurer -> configurer.jwt()
+                .decoder(jwtDecoder(jwkSource()))
+                .jwtAuthenticationConverter(jwtAuthenticationConverter))
             .authorizeRequests(configurer -> configurer
                 .anyRequest().authenticated())
             .build();
@@ -87,9 +106,9 @@ public class SecurityConfiguration {
 
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient aclUi = RegisteredClient.withId(UUID.randomUUID().toString())
             .clientId("acl-ui")
-            .clientSecret("{noop}secret")
+            .clientSecret("{noop}secret1")
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -100,12 +119,39 @@ public class SecurityConfiguration {
                 .requireAuthorizationConsent(true)
                 .build())
             .build();
-        return new InMemoryRegisteredClientRepository(registeredClient);
+        RegisteredClient postman = RegisteredClient.withId(UUID.randomUUID().toString())
+            .clientId("postman")
+            .clientSecret("{noop}secret2")
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+            .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+            .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+            .redirectUri("https://oauth.pstmn.io/v1/callback")
+            .scope(OidcScopes.OPENID)
+            .clientSettings(ClientSettings.builder()
+                .requireAuthorizationConsent(true)
+                .build())
+            .tokenSettings(TokenSettings.builder()
+                .accessTokenTimeToLive(Duration.ofDays(30))
+                .build())
+            .build();
+        return new InMemoryRegisteredClientRepository(aclUi, postman);
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl(accountRepository);
+    }
+
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
+        return context -> {
+            Authentication authentication = context.getPrincipal();
+            Set<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+            context.getClaims().claim("roles", roles);
+        };
     }
 
     @Bean

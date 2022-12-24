@@ -1,4 +1,4 @@
-package com.jacknie.examples.acl.web.member;
+package com.jacknie.examples.acl.web.member.account;
 
 import com.jacknie.examples.acl.jpa.member.MemberAccount;
 import com.jacknie.examples.acl.jpa.member.MemberAccountErrorCode;
@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class MemberAccountServiceImpl implements MemberAccountService {
         return accountRepository.findAll(dto, pageable).map(MemberAccountDto::from);
     }
 
+    @PreAuthorize("hasCreatePermission('domain::member')")
     @Transactional
     @Override
     public long createMemberAccount(PostMemberAccountDto dto) {

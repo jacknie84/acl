@@ -1,5 +1,6 @@
 package com.jacknie.examples.acl.jpa.member;
 
+import com.jacknie.examples.acl.config.security.acls.domain.AclIdentifiable;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
@@ -20,7 +21,7 @@ import java.util.Set;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class MemberAccount {
+public class MemberAccount implements AclIdentifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

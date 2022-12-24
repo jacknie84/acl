@@ -1,6 +1,6 @@
 package com.jacknie.examples.acl.web.building.facility;
 
-import com.jacknie.examples.acl.config.security.acl.AclIdentifiable;
+import com.jacknie.examples.acl.config.security.acls.domain.AclIdentifiable;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 

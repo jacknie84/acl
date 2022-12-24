@@ -1,6 +1,6 @@
 package com.jacknie.examples.acl.jpa.acl.entry;
 
-import com.jacknie.examples.acl.jpa.acl.sid.SidType;
+import com.jacknie.examples.acl.config.security.acls.domain.SidType;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
