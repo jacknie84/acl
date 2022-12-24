@@ -7,13 +7,13 @@ import com.jacknie.examples.acl.web.ErrorDto;
 import com.jacknie.examples.acl.web.HttpEntityException;
 import com.jacknie.examples.acl.web.HttpStatusException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
@@ -25,11 +25,13 @@ public class MemberAccountServiceImpl implements MemberAccountService {
     private final MemberAccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     @Override
-    public Page<MemberAccount> getMemberAccountsPage(MemberAccountsFilterDto dto, Pageable pageable) {
-        return accountRepository.findAll(dto, pageable);
+    public Page<MemberAccountDto> getMemberAccountsPage(MemberAccountsFilterDto dto, Pageable pageable) {
+        return accountRepository.findAll(dto, pageable).map(MemberAccountDto::from);
     }
 
+    @Transactional
     @Override
     public long createMemberAccount(PostMemberAccountDto dto) {
         String email = dto.getEmail();
@@ -44,14 +46,15 @@ public class MemberAccountServiceImpl implements MemberAccountService {
             HttpEntity<?> httpEntity = new HttpEntity<>(error);
             throw new HttpEntityException(HttpStatus.CONFLICT, httpEntity, message);
         }
-        MemberAccount entity = MemberAccount.builder()
+        MemberAccount entity = accountRepository.save(MemberAccount.builder()
             .email(email)
             .password(password)
             .roles(dto.getRoles())
-            .build();
-        return accountRepository.save(entity).getId();
+            .build());
+        return entity.getId();
     }
 
+    @Transactional
     @Override
     public void updateMemberAccount(long id, PutMemberAccountDto dto) {
         MemberAccount entity = accountRepository.findById(id)
@@ -65,17 +68,17 @@ public class MemberAccountServiceImpl implements MemberAccountService {
         accountRepository.save(entity);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<MemberAccountDto> findMemberAccount(long id) {
         return accountRepository.findById(id).map(MemberAccountDto::from);
     }
 
+    @Transactional
     @Override
     public void deleteMemberAccount(long id) {
-        try {
-            accountRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new HttpStatusException(HttpStatus.NOT_FOUND, e);
-        }
+        MemberAccount entity = accountRepository.findById(id)
+            .orElseThrow(() -> new HttpStatusException(HttpStatus.NOT_FOUND));
+        accountRepository.delete(entity);
     }
 }

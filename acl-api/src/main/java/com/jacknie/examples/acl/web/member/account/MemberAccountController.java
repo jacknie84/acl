@@ -1,6 +1,5 @@
 package com.jacknie.examples.acl.web.member;
 
-import com.jacknie.examples.acl.jpa.member.MemberAccount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +19,7 @@ public class MemberAccountController {
 
     @GetMapping
     public ResponseEntity<?> getMemberAccountsPage(@Valid MemberAccountsFilterDto dto, Pageable pageable) {
-        Page<MemberAccount> page = accountService.getMemberAccountsPage(dto, pageable);
+        Page<MemberAccountDto> page = accountService.getMemberAccountsPage(dto, pageable);
         return ResponseEntity.ok(page);
     }
 

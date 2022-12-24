@@ -1,14 +1,13 @@
 package com.jacknie.examples.acl.jpa.acl.oid;
 
 import com.jacknie.examples.acl.web.acl.AclFilterDto;
+import com.jacknie.examples.acl.web.member.acl.MemberAclFilterDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.model.Sid;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public interface AclObjectIdentityCustomRepository {
 
@@ -62,4 +61,10 @@ public interface AclObjectIdentityCustomRepository {
     List<ObjectIdentitySource> findChildrenByObjectIdentity(ObjectIdentity oid);
 
     Page<AclObjectIdentity> findAll(AclFilterDto dto, Pageable pageable);
+
+    List<AclObjectIdentity> findAll(List<Sid> sids, MemberAclFilterDto dto);
+
+    List<AclObjectIdentity> findAllByEntrySid(Sid sid);
+
+    List<AclObjectIdentity> findAllBySidIn(List<Sid> sids);
 }
